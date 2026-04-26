@@ -1,0 +1,58 @@
+@startuml
+' Акторы
+actor "Читатель" as Reader
+actor "Библиотекарь" as Librarian
+actor "Платёжная система" as PaymentSystem
+
+' Системная граница
+rectangle "Библиотечная система" {
+  
+  ' Прецеденты
+  usecase "Поиск книг" as Search
+  usecase "Просмотр описания" as ViewDetails
+  usecase "Бронирование книги" as Booking
+  usecase "Выдача книги" as Issue
+  usecase "Возврат книги" as Return
+  usecase "Оплата штрафа" as PayFine
+  usecase "Управление фондом" as ManageFund
+  usecase "Продление срока" as Extend
+  usecase "Генерация отчёта" as Report
+  
+  ' Подпрецеденты для управления фондом (generalization)
+  usecase "Добавление книги" as AddBook
+  usecase "Удаление книги" as RemoveBook
+}
+
+' Ассоциации акторов с прецедентами
+Reader --> Search
+Reader --> ViewDetails
+Reader --> Booking
+Reader --> Extend
+Reader --> PayFine
+
+Librarian --> Issue
+Librarian --> Return
+Librarian --> ManageFund
+Librarian --> Report
+Librarian --> Booking
+
+PaymentSystem --> PayFine
+
+' Отношения include
+Booking ..> Search : <<include>>
+Issue ..> Booking : <<include>>
+Return ..> Booking : <<include>>
+PayFine ..> Return : <<include>>
+
+' Отношения extend
+Extend ..> Booking : <<extend>>
+
+' Generalisation для прецедентов (ИСПРАВЛЕНО)
+ManageFund --|> AddBook
+ManageFund --|> RemoveBook
+
+' Generalisation для акторов (демонстрация)
+actor "Системный администратор" as SysAdmin
+SysAdmin --|> Librarian
+
+@enduml
